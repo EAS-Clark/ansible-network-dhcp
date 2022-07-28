@@ -1,2 +1,8 @@
 ---
 # vars file for dhcp
+gateway_ip: 10.0.0.1
+domainName: "clark"
+dns_ip: 8.8.8.8
+
+gateway_mac: "00:50:56:87:da:94"
+
