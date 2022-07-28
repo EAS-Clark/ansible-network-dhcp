@@ -5,8 +5,6 @@
     command: subscription-manager refresh 
 
 
-# Install dhcp-server and edit config
-# yum install dhcp-server   
   - name: Install the latest of dhcp-server
     ansible.builtin.yum:
       name: dhcp
@@ -34,16 +32,12 @@
                 fixed-address 10.0.0.3;
         }
 
-
-# systemctl start dhcpd
-# systemctl status dhcpd    
-
   - name: reloading dhcpd.service
     service:
       name: dhcpd
       state: started    
 
-# firewall-cmd --add-service=dhcp --permanent
+
 
   - name: permit traffic in default zone for dhcp service
     ansible.posix.firewalld:
@@ -51,43 +45,10 @@
       permanent: yes
       state: enabled
 
-# firewall-cmd --reload   
-
   - name: reloading firewalld
     service:
       name: firewalld
       state: restarted
-
-
-
-
-        # NAME=ens224
-        # DEVICE=ens224
-        # HWADDR=00:50:56:87:e4:c5
-        # ONBOOT=yes
-        # USERCTL=no
-        # BOOTPROTO=static
-        # NETMASK=255.255.255.0
-        # IPADDR=10.0.0.2
-        # PEERDNS=yes
-
-        # check_link_down() {
-        # return 1;
-        # }
-
-
-# TYPE=Ethernet
-# PROXY_METHOD=none
-# BROWSER_ONLY=no
-
-
-# IPV4_FAILURE_FATAL=no
-# IPV6INIT=yes
-# IPV6_AUTOCONF=yes
-# IPV6_DEFROUTE=yes
-# IPV6_FAILURE_FATAL=no
-
-# UUID=32d7c5eb-362e-4764-8ddd-847ab5c94e8e
 
 
   - name: Editing network service
@@ -101,16 +62,11 @@
       insertafter: EOF
  
 
-
-# systemctl start dhcpd
   - name: reloading firewalld
     service:
       name: dhcpd
       state: started
 
-
-# ifdown && ifup so the ssh doesnt drop
-# ifdown ens160 && ifup ens160 
 
   - name: reloading network
     service:
