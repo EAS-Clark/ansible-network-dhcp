@@ -1,78 +1,20 @@
 ---
+
+
 # tasks file for dhcp
 
-  - name: Refresh subscription manager
-    command: subscription-manager refresh 
-
-
-  - name: Install the latest of dhcp-server
-    ansible.builtin.yum:
-      name: dhcp
-      state: latest
-
-
-  - name: Editing dhcpd.conf
-    blockinfile:
-      dest: /etc/dhcp/dhcpd.conf
-      block: |
-        subnet 10.0.0.0 netmask 255.255.255.0 {
-                range 10.0.0.10 10.0.0.50;
-                option subnet-mask 255.255.255.0;
-                option routers {{ gateway_ip }};
-                option domain-name "{{ domainName }}.local";
-                option domain-search "{{ domainName }}.local";
-                option domain-name-servers 10.0.0.3, 8.8.8.8 ;
-        }
-        host gateway-node {
-                hardware ethernet {{ gateway_mac }};
-                fixed-address {{ gateway_ip }};
-        }
-        host DNS-node {
-                hardware ethernet 00:50:56:b2:23:bd;
-                fixed-address 10.0.0.3;
-        }
-
-  - name: reloading dhcpd.service
-    service:
-      name: dhcpd
-      state: started    
+  # - name: Print all available facts
+  #   ansible.builtin.debug:
+  #     var: ansible_facts
 
 
 
-  - name: permit traffic in default zone for dhcp service
-    ansible.posix.firewalld:
-      service: dhcp
-      permanent: yes
-      state: enabled
-
-  - name: reloading firewalld
-    service:
-      name: firewalld
-      state: restarted
-
-
-  - name: Editing network service
-    blockinfile:
-      dest: /etc/sysconfig/network-scripts/ifcfg-ens224
-      block: |
-        DEFROUTE=yes
-        GATEWAY={{ gateway_ip }}
-        DOMAIN={{ domainName }}
-        DNS1={{ dns_ip }}
-      insertafter: EOF
- 
-
-  - name: reloading firewalld
-    service:
-      name: dhcpd
-      state: started
-
-
-  - name: reloading network
-    service:
-      name: network
-      state: restarted
+- name: gateway
+  hosts: clark-gateway
+  roles:
+    - ansible-network-gateway
 
 
 
- 
+- name: run dhcp
+  ansible.builtin.include_tasks: dhcp.yml

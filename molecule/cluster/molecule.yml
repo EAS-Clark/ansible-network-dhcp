@@ -1,6 +1,9 @@
 ---
 dependency:
   name: galaxy
+  options:
+    role-file: requirements.yml
+
 driver:
   name: vmware
   vcenter_hostname: 192.168.1.100
@@ -9,7 +12,7 @@ driver:
   validate_certs: false
   datacenter: Cardiff
   esxi_hostname: 192.168.1.102
-  folder: /Ansible/molecule
+  folder: /Ansible/molecule/clark
   vm_username: root
   vm_password: Renegade187!
   instance_os_type: linux # is possible only specify [linux or windows]
@@ -67,9 +70,5 @@ platforms:
 
 provisioner:
   name: ansible
-  env:
-    ANSIBLE_ROLES_PATH: "../../roles"
-  playbooks:
-    converge: ${MOLECULE_PLAYBOOK:-converge.yml}
 verifier:
   name: ansible
