@@ -1,0 +1,34 @@
+---
+- hosts: all
+
+
+  # tasks file for dhcp
+  vars_files:
+    - vars/main.yml
+
+  roles:
+    -  {role: ansible-network-gateway,  when: '"clark-gateway" in inventory_hostname'}
+      # when: "{{inventory_hostname }}in {{ groups['clark-gateway'] }} "
+     
+
+
+  tasks:
+    - name: run dhcp task file
+      include_tasks: tasks/main.yml
+      when: "{{ 'clark-dhcp' in inventory_hostname }}"
+
+
+  # - name: gateway
+  #   ansible.builtin.include_role:
+  #     name: ansible-network-gateway
+  #   when: "'gateway' in {{ hosts_vars }}"
+
+
+
+# - name: run dhcp
+#   ansible.builtin.include: dhcp.yml
+#   when: "'dhcp' in {{ hosts_vars }}"
+
+
+
+
