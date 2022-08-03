@@ -71,3 +71,10 @@
     service:
       name: network
       state: restarted
+
+  - name: Removing ens192
+    community.general.nmcli:
+      conn_name: ens192
+      state: absent
+
+    
