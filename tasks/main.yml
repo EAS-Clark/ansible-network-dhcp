@@ -20,7 +20,7 @@
                 option routers {{ gateway_ip }};
                 option domain-name "{{ domainName }}.local";
                 option domain-search "{{ domainName }}.local";
-                option domain-name-servers {{ dns_ip }}, 8.8.8.8 ;
+                option domain-name-servers {{ dns_ip }};
         }
         host gateway-node {
                 hardware ethernet {{ gateway_mac }};
@@ -56,7 +56,7 @@
       block: |
         DEFROUTE=yes
         GATEWAY={{ gateway_ip }}
-        DOMAIN={{ domainName }}
+        DOMAIN={{ domainName }}.local
         DNS1={{ dns_ip }}
       insertafter: EOF
 
