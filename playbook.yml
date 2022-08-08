@@ -2,20 +2,59 @@
 - hosts: all
 
 
+     
+
   # tasks file for dhcp
   vars_files:
     - vars/main.yml
 
-  roles:
-    -  {role: ansible-network-gateway,  when: '"clark-gateway" in inventory_hostname'}
-      # when: "{{inventory_hostname }}in {{ groups['clark-gateway'] }} "
+  # roles:
+  #   -  {role: ansible-network-gateway,  when: '"clark-gateway" in inventory_hostname'}
+  #     # when: "{{inventory_hostname }}in {{ groups['clark-gateway'] }} "
      
 
 
   tasks:
-    - name: run dhcp task file
-      include_tasks: tasks/main.yml
-      when: "{{ 'clark-dhcp' in inventory_hostname }}"
+
+  - name: Find NICs 
+    when: "{{ 'clark-dhcp' in inventory_hostname }}"
+    vars: 
+      mac_address: "{{ ansible_facts[ens224]['macaddress']|default(None) }}"
+
+
+  - name: sdfsdf 
+    debug:
+      msg: "{{ mac_address }}"
+
+# data:
+#   - name: gateway
+#     ip: 10.0.0.1
+#     ip_out: 192.168.1.100
+#     mac_address: 0:50:56:87:79:f3
+#     interface_in_name: ens224
+#     interface_out_name: ens192
+#   - name: dhcp
+#     ip: 10.0.0.2
+#     mac_address: 0:50:56:87:79:f3
+#     interface_in_name: ens224
+#     interface_out_name: ens192
+#   - name: dns
+#     ip: 10.0.0.3
+#     mac_address: 0:50:56:87:79:f3
+#     interface_in_name: ens224
+#     interface_out_name: ens192
+
+
+
+
+
+
+
+
+
+    # - name: run dhcp task file
+    #   include_tasks: tasks/main.yml
+    #   when: "{{ 'clark-dhcp' in inventory_hostname }}"
 
 
   # - name: gateway
