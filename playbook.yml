@@ -18,13 +18,18 @@
 
   - name: Find NICs 
     when: "{{ 'clark-dhcp' in inventory_hostname }}"
-    vars: 
-      mac_address: "{{ ansible_facts[ens224]['macaddress']|default(None) }}"
+    ansible.builtin.debug:
+      msg: "{{ ansible_facts[item]['macaddress']|default(None) }}"
+    with_items:
+    - "{{ ansible_interfaces }}"
+   
+      
+    - name: Retrieve host vars
+      debug:
+        msg: "{{ ansible_interfaces | difference(['lo']) | map('regex_replace', '^(.*)$', 'ansible_\\1' ) | map('extract', hostvars[inventory_hostname], 'macaddress')  | list }}"
+      when: "{{ 'clark-dhcp' in inventory_hostname }}"
 
 
-  - name: sdfsdf 
-    debug:
-      msg: "{{ mac_address }}"
 
 # data:
 #   - name: gateway
