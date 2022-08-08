@@ -5,7 +5,5 @@
     # - name: "Include clark.dhcp"
     #   include_role:
     #     name: "clark.dhcp"
-  vars:
-    multi_mode: true
 
 - import_playbook: ../../playbook.yml

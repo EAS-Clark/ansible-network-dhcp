@@ -1,14 +1,14 @@
 ---
 # vars file for dhcp
 
-
+test: hi
 data:
   - name: gateway
     ip: 10.0.0.1
     ip_out: 192.168.1.100
     mac_address: 0:50:56:87:79:f3
-    interface_in_name: "{{ hostvars[inventory_hostname].ansible_interfaces[2], when: {{ 'clark-dhcp' in inventory_hostname }}"
-    interface_out_name: "{{ hostvars[inventory_hostname].ansible_interfaces[1] ,  when: {{ 'clark-dhcp' in inventory_hostname }}"
+    interface_in_name: ens192
+    interface_out_name: ens224
   - name: dhcp
     ip: 10.0.0.2
     mac_address: 0:50:56:87:79:f3

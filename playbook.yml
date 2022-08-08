@@ -1,7 +1,6 @@
 ---
 - hosts: all
 
-
      
 
   # tasks file for dhcp
@@ -15,37 +14,66 @@
 
 
   tasks:
-
-  - name: Find NICs 
+  - name: interface_out_name for dhcp
     when: "{{ 'clark-dhcp' in inventory_hostname }}"
     ansible.builtin.debug:
-      msg: "{{ ansible_facts[item]['macaddress']|default(None) }}"
-    with_items:
-    - "{{ ansible_interfaces }}"
-   
+      msg: "{{ ansible_facts.interfaces[1] }}"
+
+  - name: interface_out_name for dhcp
+    when: "{{ 'clark-dhcp' in inventory_hostname }}"
+    ansible.builtin.debug:
+      msg: "{{ ansible_facts.interfaces[2] }}"
+
+  - name: ip for dhcp in
+    when: "{{ 'clark-dhcp' in inventory_hostname }}"
+    ansible.builtin.debug:
+      msg: "{{ ansible_facts[data[1].interface_in_name]['ipv4'].address }}"
+
+  - name: mac_address for dhcp in
+    when: "{{ 'clark-dhcp' in inventory_hostname }}"
+    ansible.builtin.debug:
+      msg: "{{ ansible_facts[data[1].interface_in_name]['macaddress']|default(None) }}"
+
+
+
+
+
+  # - name: mac_address for dhcp in
+  #   ansible.builtin.debug:
+  #     msg: "{{ data  }}"
       
-    - name: Retrieve host vars
-      debug:
-        msg: "{{ ansible_interfaces | difference(['lo']) | map('regex_replace', '^(.*)$', 'ansible_\\1' ) | map('extract', hostvars[inventory_hostname], 'macaddress')  | list }}"
-      when: "{{ 'clark-dhcp' in inventory_hostname }}"
+
+   
+
+  # - name: adding foward zone and back zone to named.conf
+  #   ansible.builtin.blockinfile:
+  #     insertafter: EOF
+  #     create: yes
+  #     marker: "// from ansible"
+  #     path: /test.txt
+  #     block: |
+  #         {{ data[0].interface_in_name }}
 
 
+
+      
+#      msg: "{{ ansible_facts[item]['macaddress']|default(None) }}"
 
 # data:
 #   - name: gateway
 #     ip: 10.0.0.1
 #     ip_out: 192.168.1.100
-#     mac_address: 0:50:56:87:79:f3
+#     mac_address: 0:50:56:87:79:f3 
 #     interface_in_name: ens224
 #     interface_out_name: ens192
 #   - name: dhcp
-#     ip: 10.0.0.2
-#     mac_address: 0:50:56:87:79:f3
-#     interface_in_name: ens224
-#     interface_out_name: ens192
+#     ip: 10.0.0.2 //
+#     mac_address: 0:50:56:87:79:f3 //
+#     interface_in_name: ens224 //
+#     interface_out_name: ens192 //
 #   - name: dns
 #     ip: 10.0.0.3
-#     mac_address: 0:50:56:87:79:f3
+#     mac_address: 0:50:56:87:79:f3 
 #     interface_in_name: ens224
 #     interface_out_name: ens192
 
