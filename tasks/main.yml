@@ -9,7 +9,6 @@
       name: dhcp
       state: latest
 
-
   - name: Editing dhcpd.conf
     blockinfile:
       dest: /etc/dhcp/dhcpd.conf
@@ -17,26 +16,24 @@
         subnet {{ subnet }} netmask 255.255.255.0 {
                 range {{ range_min }} {{ range_max }};
                 option subnet-mask 255.255.255.0;
-                option routers {{ gateway_ip }};
-                option domain-name "{{ domainName }}.local";
-                option domain-search "{{ domainName }}.local";
-                option domain-name-servers {{ dns_ip }};
+                option routers {{ data[0].ip }};
+                option domain-name "{{ domain_name }}.{{ domain_name_extension }}";
+                option domain-search "{{ domain_name }}.{{ domain_name_extension }}";
+                option domain-name-servers {{ data[2].ip }};
         }
         host gateway-node {
-                hardware ethernet {{ gateway_mac }};
-                fixed-address {{ gateway_ip }};
+                hardware ethernet {{ data[0].mac_address }};  
+                fixed-address {{ data[0].ip }};
         }
         host DNS-node {
-                hardware ethernet {{ dns_mac }};
-                fixed-address {{ dns_ip }};
+                hardware ethernet {{ data[2].mac_address  }};
+                fixed-address {{ data[2].ip  }};
         }
 
   - name: reloading dhcpd.service
     service:
       name: dhcpd
       state: started    
-
-
 
   - name: permit traffic in default zone for dhcp service
     ansible.posix.firewalld:
@@ -52,12 +49,12 @@
 
   - name: Editing network service
     blockinfile:
-      dest: /etc/sysconfig/network-scripts/ifcfg-{{ dhcp_interface_in_name }}
+      dest: /etc/sysconfig/network-scripts/ifcfg-{{ data[1].interface_in_name }}
       block: |
         DEFROUTE=yes
-        GATEWAY={{ gateway_ip }}
-        DOMAIN={{ domainName }}.local
-        DNS1={{ dns_ip }}
+        GATEWAY={{ data[0].ip }}
+        DOMAIN={{ domain_name }}.{{ domain_name_extension }}
+        DNS1={{ data[2].ip }}
       insertafter: EOF
 
 

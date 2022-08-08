@@ -1,16 +1,20 @@
 ---
 # vars file for dhcp
-domainName: "clark"
+
+multi_mode: false
+
+domain_name: "clark"
+domain_name_extension: "local"
 
 gateway_ip: 10.0.0.1
-gateway_ip_last_octave: 3
+gateway_ip_last_octave: 1
 gateway_ip_out: 192.168.6.101
 gateway_mac: "00:50:56:87:e7:41"
 gateway_interface_in_name: ens224
 gateway_interface_out_name: ens192
 
 dhcp_ip: 10.0.0.2
-dhcp_ip_last_octave: 3
+dhcp_ip_last_octave: 2
 dhcp_mac: sdfsdf
 dhcp_interface_in_name: ens224
 dhcp_interface_out_name: ens192
@@ -28,4 +32,21 @@ dns_interface_in_name: ens224
 dns_interface_out_name: ens192
 
 
-    
+data:
+  - name: gateway
+    ip: 10.0.0.1
+    ip_out: 192.168.1.100
+    mac_address: 0:50:56:87:79:f3
+    interface_in_name: ens224
+    interface_out_name: ens192
+  - name: dhcp
+    ip: 10.0.0.2
+    mac_address: 0:50:56:87:79:f3
+    interface_in_name: ens224
+    interface_out_name: ens192
+  - name: dns
+    ip: 10.0.0.3
+    mac_address: 0:50:56:87:79:f3
+    interface_in_name: ens224
+    interface_out_name: ens192
+
