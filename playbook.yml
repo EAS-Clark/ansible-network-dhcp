@@ -15,7 +15,7 @@
 
   tasks:
   - name: updating data for gateway 
-    when: "{{ 'clark-gateway' in inventory_hostname }}"
+    when: "{{ 'clark-gateway' in ansible_facts.hostname }}"
     ansible.builtin.set_fact:
       data:
         - name: gateway
@@ -25,8 +25,9 @@
           ip_out: "{{ ansible_facts[data[0].interface_out_name]['ipv4'].address }}"
           mac_address: "{{ ansible_facts[data[0].interface_in_name]['macaddress']|default(None) }}"
 
+
   - name: updating data for dhcp 
-    when: "{{ 'clark-dhcp' in inventory_hostname }}"
+    when: "{{ 'clark-dhcp' in ansible_facts.hostname }}"
     ansible.builtin.set_fact:
       data:
         - name: dhcp
@@ -36,7 +37,7 @@
           mac_address: "{{ ansible_facts[data[1].interface_in_name]['macaddress']|default(None) }}"
 
   - name: updating data for dns 
-    when: "{{ 'clark-dns' in inventory_hostname }}"
+    when: "{{ 'clark-dns' in ansible_facts.hostname }}"
     ansible.builtin.set_fact:
       data:
         - name: dns
@@ -45,13 +46,11 @@
           ip: "{{ ansible_facts[data[2].interface_in_name]['ipv4'].address }}"
           mac_address: "{{ ansible_facts[data[2].interface_in_name]['macaddress']|default(None) }}"
 
-
   - name: print data test 
     ansible.builtin.debug:
       msg: "{{ data }}"
       
-
-   
+      
 
   # - name: adding foward zone and back zone to named.conf
   #   ansible.builtin.blockinfile:
