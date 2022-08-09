@@ -81,4 +81,11 @@
       name: network
       state: restarted
 
+  - name: Removing ens192
+    when: "{{ 'clark-dhcp' in inventory_hostname }}"
+    community.general.nmcli:
+      conn_name: ens192
+      state: absent
+
+    
 
