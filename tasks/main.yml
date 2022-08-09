@@ -2,7 +2,7 @@
 
   - name: test
     debug:
-      msg: "{{ subnet | default('default_value') }}"
+      msg: "{{ subnet }}"
 
   - name: Refresh subscription manager
     command: subscription-manager refresh 
@@ -17,21 +17,21 @@
     blockinfile:
       dest: /etc/dhcp/dhcpd.conf
       block: |
-        subnet {{ subnet | default('default_value') }} netmask 255.255.255.0 {
-                range {{ range_min | default('default_value') }} {{ range_max | default('default_value') }};
+        subnet {{ subnet }} netmask 255.255.255.0 {
+                range {{ range_min }} {{ range_max }};
                 option subnet-mask 255.255.255.0;
-                option routers {{ data[0].ip | default('default_value') }};
-                option domain-name "{{ domain_name | default('default_value') }}.{{ domain_name_extension | default('default_value') }}";
-                option domain-search "{{ domain_name | default('default_value') }}.{{ domain_name_extension | default('default_value') }}";
-                option domain-name-servers {{ data[2].ip | default('default_value') }};
+                option routers {{ data[0].ip }};
+                option domain-name "{{ domain_name }}.{{ domain_name_extension }}";
+                option domain-search "{{ domain_name }}.{{ domain_name_extension }}";
+                option domain-name-servers {{ data[2].ip }};
         }
         host gateway-node {
-                hardware ethernet {{ data[0].mac_address | default('default_value') }};  
-                fixed-address {{ data[0].ip | default('default_value') }};
+                hardware ethernet {{ data[0].mac_address }};  
+                fixed-address {{ data[0].ip }};
         }
         host DNS-node {
-                hardware ethernet {{ data[2].mac_address | default('default_value') }};
-                fixed-address {{ data[2].ip | default('default_value') }};
+                hardware ethernet {{ data[2].mac_address }};
+                fixed-address {{ data[2].ip }};
         }
 
   - name: reloading dhcpd.service
@@ -53,12 +53,12 @@
 
   - name: Editing network service
     blockinfile:
-      dest: /etc/sysconfig/network-scripts/ifcfg-{{ data[1].interface_in_name | default('default_value') }}
+      dest: /etc/sysconfig/network-scripts/ifcfg-{{ data[1].interface_in_name }}
       block: |
         DEFROUTE=yes
-        GATEWAY={{ data[0].ip | default('default_value') }}
-        DOMAIN={{ domain_name | default('default_value') }}.{{ domain_name_extension | default('default_value') }}
-        DNS1={{ data[2].ip | default('default_value') }}
+        GATEWAY={{ data[0].ip }}
+        DOMAIN={{ domain_name }}.{{ domain_name_extension }}
+        DNS1={{ data[2].ip }}
       insertafter: EOF
 
 
