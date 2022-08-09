@@ -9,6 +9,10 @@
   
   pre_tasks:
 
+  - name: testing 
+    debug: 
+      msg: "{{ ansible_facts.hostname }}"
+
   - name: updating data for gateway 
     when: "{{ 'clark-gateway' in ansible_facts.hostname }}"
     ansible.builtin.set_fact:
@@ -61,6 +65,8 @@
           ip_out: "{{ hostvars['clark-dns']['data']['ip_out'] }}"
           mac_address: "{{ hostvars['clark-dns']['data']['mac_address'] }}"
   
+
+
   roles:
     -  {role: ansible-network-gateway,  when: '"clark-gateway" in inventory_hostname'}
 
