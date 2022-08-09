@@ -69,6 +69,16 @@
     include_tasks: tasks/main.yml
     when: "{{ 'clark-dhcp' in inventory_hostname }}"
 
+  - name: reloading network for gateway
+    when: "{{ 'clark-gateway' in inventory_hostname }}"
+    service:
+      name: network
+      state: restarted
 
+  - name: reloading network for gateway
+    when: "{{ 'clark-dhcp' in inventory_hostname }}"
+    service:
+      name: network
+      state: restarted
 
 

@@ -1,12 +1,7 @@
 ---
 
-  - name: test
-    debug:
-      msg: "{{ subnet }}"
-
   - name: Refresh subscription manager
     command: subscription-manager refresh 
-
 
   - name: Install the latest of dhcp-server
     ansible.builtin.yum:
@@ -50,7 +45,6 @@
       name: firewalld
       state: restarted
 
-
   - name: Editing network service
     blockinfile:
       dest: /etc/sysconfig/network-scripts/ifcfg-{{ data[1].interface_in_name }}
@@ -60,7 +54,6 @@
         DOMAIN={{ domain_name }}.{{ domain_name_extension }}
         DNS1={{ data[2].ip }}
       insertafter: EOF
-
 
   - name: reloading firewalld
     service:
