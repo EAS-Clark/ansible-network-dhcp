@@ -1,6 +1,18 @@
 ---
 # vars file for dhcp
 
+multi_mode: false
+
+domain_name: "clark"
+domain_name_extension: "local"
+
+subnet: 10.0.0.0
+range_min: 10.0.0.10
+range_max: 10.0.0.50
+three_octave: 10.0.0
+back_zone: 0.0.10
+
+
 test: hi
 data:
   - name: gateway

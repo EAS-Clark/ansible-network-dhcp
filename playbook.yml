@@ -1,112 +1,73 @@
 ---
 - hosts: all
 
-     
-
+    
   # tasks file for dhcp
+
   vars_files:
-    - vars/main.yml
+  - vars/main.yml
+  
+  pre_tasks:
 
-  # roles:
-  #   -  {role: ansible-network-gateway,  when: '"clark-gateway" in inventory_hostname'}
-  #     # when: "{{inventory_hostname }}in {{ groups['clark-gateway'] }} "
-     
-
-
-  tasks:
   - name: updating data for gateway 
     when: "{{ 'clark-gateway' in ansible_facts.hostname }}"
     ansible.builtin.set_fact:
       data:
-        - name: gateway
-          interface_in_name: "{{ ansible_facts.interfaces[2] }}"
-          interface_out_name: "{{ ansible_facts.interfaces[1] }}"
-          ip: "{{ ansible_facts[data[0].interface_in_name]['ipv4'].address }}"
-          ip_out: "{{ ansible_facts[data[0].interface_out_name]['ipv4'].address }}"
-          mac_address: "{{ ansible_facts[data[0].interface_in_name]['macaddress']|default(None) }}"
-
+        interface_in_name: "{{ ansible_facts.interfaces[2] }}"
+        interface_out_name: "{{ ansible_facts.interfaces[1] }}"
+        ip: "{{ ansible_facts[data[0].interface_in_name]['ipv4'].address }}"
+        ip_out: "{{ ansible_facts[data[0].interface_out_name]['ipv4'].address }}"
+        mac_address: "{{ ansible_facts[data[0].interface_in_name]['macaddress']|default(None) }}"
 
   - name: updating data for dhcp 
     when: "{{ 'clark-dhcp' in ansible_facts.hostname }}"
     ansible.builtin.set_fact:
       data:
-        - name: dhcp
-          interface_in_name: "{{ ansible_facts.interfaces[2] }}"
-          interface_out_name: "{{ ansible_facts.interfaces[1] }}"
-          ip: "{{ ansible_facts[data[1].interface_in_name]['ipv4'].address }}"
-          mac_address: "{{ ansible_facts[data[1].interface_in_name]['macaddress']|default(None) }}"
+        interface_in_name: "{{ ansible_facts.interfaces[2] }}"
+        interface_out_name: "{{ ansible_facts.interfaces[1] }}"
+        ip: "{{ ansible_facts[data[1].interface_in_name]['ipv4'].address }}"
+        ip_out: "{{ ansible_facts[data[1].interface_out_name]['ipv4'].address }}"
+        mac_address: "{{ ansible_facts[data[1].interface_in_name]['macaddress']|default(None) }}"
 
   - name: updating data for dns 
     when: "{{ 'clark-dns' in ansible_facts.hostname }}"
     ansible.builtin.set_fact:
       data:
+        interface_in_name: "{{ ansible_facts.interfaces[2] }}"
+        interface_out_name: "{{ ansible_facts.interfaces[1] }}"
+        ip: "{{ ansible_facts[data[2].interface_in_name]['ipv4'].address }}"
+        ip_out: "{{ ansible_facts[data[2].interface_out_name]['ipv4'].address }}"
+        mac_address: "{{ ansible_facts[data[2].interface_in_name]['macaddress']|default(None) }}"
+
+  - name: setting data with all vm data
+    ansible.builtin.set_fact:
+      data: 
+        - name: gateway
+          interface_in_name: "{{ hostvars['clark-gateway']['data']['interface_in_name'] }}"
+          interface_out_name: "{{ hostvars['clark-gateway']['data']['interface_out_name'] }}"
+          ip: "{{ hostvars['clark-gateway']['data']['ip'] }}"
+          ip_out: "{{ hostvars['clark-gateway']['data']['ip_out'] }}"
+          mac_address: "{{ hostvars['clark-gateway']['data']['mac_address'] }}"
+        - name: dhcp
+          interface_in_name: "{{ hostvars['clark-dhcp']['data']['interface_in_name'] }}"
+          interface_out_name: "{{ hostvars['clark-dhcp']['data']['interface_out_name'] }}"
+          ip: "{{ hostvars['clark-dhcp']['data']['ip'] }}"
+          ip_out: "{{ hostvars['clark-dhcp']['data']['ip_out'] }}"
+          mac_address: "{{ hostvars['clark-dhcp']['data']['mac_address'] }}"
         - name: dns
-          interface_in_name: "{{ ansible_facts.interfaces[2] }}"
-          interface_out_name: "{{ ansible_facts.interfaces[1] }}"
-          ip: "{{ ansible_facts[data[2].interface_in_name]['ipv4'].address }}"
-          mac_address: "{{ ansible_facts[data[2].interface_in_name]['macaddress']|default(None) }}"
+          interface_in_name: "{{ hostvars['clark-dns']['data']['interface_in_name'] }}"
+          interface_out_name: "{{ hostvars['clark-dns']['data']['interface_out_name'] }}"
+          ip: "{{ hostvars['clark-dns']['data']['ip'] }}"
+          ip_out: "{{ hostvars['clark-dns']['data']['ip_out'] }}"
+          mac_address: "{{ hostvars['clark-dns']['data']['mac_address'] }}"
+  
+  roles:
+    -  {role: ansible-network-gateway,  when: '"clark-gateway" in inventory_hostname'}
 
-  - name: print data test 
-    ansible.builtin.debug:
-      msg: "{{ data }}"
-      
-      
-
-  # - name: adding foward zone and back zone to named.conf
-  #   ansible.builtin.blockinfile:
-  #     insertafter: EOF
-  #     create: yes
-  #     marker: "// from ansible"
-  #     path: /test.txt
-  #     block: |
-  #         {{ data[0].interface_in_name }}
-
-
-
-      
-#      msg: "{{ ansible_facts[item]['macaddress']|default(None) }}"
-
-# data:
-#   - name: gateway
-#     ip: 10.0.0.1
-#     ip_out: 192.168.1.100
-#     mac_address: 0:50:56:87:79:f3 
-#     interface_in_name: ens224
-#     interface_out_name: ens192
-#   - name: dhcp
-#     ip: 10.0.0.2 //
-#     mac_address: 0:50:56:87:79:f3 //
-#     interface_in_name: ens224 //
-#     interface_out_name: ens192 //
-#   - name: dns
-#     ip: 10.0.0.3
-#     mac_address: 0:50:56:87:79:f3 
-#     interface_in_name: ens224
-#     interface_out_name: ens192
-
-
-
-
-
-
-
-
-
-    # - name: run dhcp task file
-    #   include_tasks: tasks/main.yml
-    #   when: "{{ 'clark-dhcp' in inventory_hostname }}"
-
-
-  # - name: gateway
-  #   ansible.builtin.include_role:
-  #     name: ansible-network-gateway
-  #   when: "'gateway' in {{ hosts_vars }}"
-
-
-
-# - name: run dhcp
-#   ansible.builtin.include: dhcp.yml
-#   when: "'dhcp' in {{ hosts_vars }}"
+  tasks:
+  - name: run dhcp task file
+    include_tasks: tasks/main.yml
+    when: "{{ 'clark-dhcp' in inventory_hostname }}"
 
 
 
