@@ -5,3 +5,8 @@
     - name: "Include clark.dhcp"
       include_role:
         name: "clark.dhcp"
+
+    - name: Removing ens192
+      community.general.nmcli:
+        conn_name: ens192
+        state: absent
