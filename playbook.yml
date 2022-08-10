@@ -9,18 +9,8 @@
   
   pre_tasks:
 
-  - name: updating data for gateway 
-    when: "{{ 'clark-gateway' in ansible_facts.hostname }}"
-    ansible.builtin.set_fact:
-      data:
-        interface_in_name: "{{ ansible_facts.interfaces[2] }}"
-        interface_out_name: "{{ ansible_facts.interfaces[1] }}"
-        ip: "{{ ansible_facts[data[0].interface_in_name]['ipv4'].address }}"
-        ip_out: "{{ ansible_facts[data[0].interface_out_name]['ipv4'].address }}"
-        mac_address: "{{ ansible_facts[data[0].interface_in_name]['macaddress']|default(None) }}"
-
   - name: updating data for dhcp 
-    when: "{{ 'clark-dhcp' in ansible_facts.hostname }}"
+    when: "{{ item in ansible_facts.hostname }}"
     ansible.builtin.set_fact:
       data:
         interface_in_name: "{{ ansible_facts.interfaces[2] }}"
@@ -28,16 +18,7 @@
         ip: "{{ ansible_facts[data[1].interface_in_name]['ipv4'].address }}"
         ip_out: "{{ ansible_facts[data[1].interface_out_name]['ipv4'].address }}"
         mac_address: "{{ ansible_facts[data[1].interface_in_name]['macaddress']|default(None) }}"
-
-  - name: updating data for dns 
-    when: "{{ 'clark-dns' in ansible_facts.hostname }}"
-    ansible.builtin.set_fact:
-      data:
-        interface_in_name: "{{ ansible_facts.interfaces[2] }}"
-        interface_out_name: "{{ ansible_facts.interfaces[1] }}"
-        ip: "{{ ansible_facts[data[2].interface_in_name]['ipv4'].address }}"
-        ip_out: "{{ ansible_facts[data[2].interface_out_name]['ipv4'].address }}"
-        mac_address: "{{ ansible_facts[data[2].interface_in_name]['macaddress']|default(None) }}"
+    loop: "{{ groups['all'] }}"
 
   - name: setting data with all vm data
     ansible.builtin.set_fact:
